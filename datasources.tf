@@ -6,7 +6,7 @@ data "azurerm_virtual_network" "vnt" {
 # Query - existing subnet
 data "azurerm_subnet" "pepstasbnt" {
   
-  name                 = "Data"
+  name                 = "default"
   resource_group_name  = "arg-dev-r1-Marktest-01"
   virtual_network_name = data.azurerm_virtual_network.vnt.name
     
