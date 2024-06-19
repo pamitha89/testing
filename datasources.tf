@@ -1,3 +1,19 @@
+data "azurerm_virtual_network" "vnt" {
+  name                 = "synapse-test"
+  resource_group_name  = "vnets"
+}
+
+# Query - existing subnet
+data "azurerm_subnet" "pepstasbnt" {
+  
+  name                 = "default"
+  resource_group_name  = "vnets"
+  virtual_network_name = data.azurerm_virtual_network.vnt.name
+    
+  depends_on = [data.azurerm_virtual_network.vnt]
+}
+
+
 data "azurerm_resource_group" "arg" {
   name = var.resource_group_name
 }
