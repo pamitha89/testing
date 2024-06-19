@@ -1,13 +1,13 @@
 data "azurerm_virtual_network" "vnt" {
-  name                 = "synapse-test"
-  resource_group_name  = "vnets"
+  name                 = "vnt-dev-r1-demo-01"
+  resource_group_name  = "arg-dev-r1-Marktest-01"
 }
 
 # Query - existing subnet
 data "azurerm_subnet" "pepstasbnt" {
   
-  name                 = "default"
-  resource_group_name  = "vnets"
+  name                 = "Data"
+  resource_group_name  = "arg-dev-r1-Marktest-01"
   virtual_network_name = data.azurerm_virtual_network.vnt.name
     
   depends_on = [data.azurerm_virtual_network.vnt]
@@ -23,7 +23,7 @@ data "azurerm_private_dns_zone" "dnszone" {
 
   for_each            = var.azurePrivateDNS
   name                = each.value
-  resource_group_name = "vnets"
+  resource_group_name = "arg-dev-r1-Marktest-01"
 }
 
 data "azurerm_client_config" "current" {}
@@ -32,13 +32,13 @@ data "azurerm_subscription" "current" {
 data "azurerm_private_dns_zone" "syn_st_zone_blob" {
   #provider = azurerm.CoreServices
   name                = "privatelink.blob.core.windows.net"
-  resource_group_name = "vnets"
+  resource_group_name = "arg-dev-r1-Marktest-01"
 }
 
 data "azurerm_private_dns_zone" "syn_st_zone_dfs" {
   #provider = azurerm.CoreServices
   name                = "privatelink.dfs.core.windows.net"
-  resource_group_name = "vnets"
+  resource_group_name = "arg-dev-r1-Marktest-01"
 }
 
 # Linking of DNS zones to Virtual Network
