@@ -6,7 +6,7 @@ locals {
 
 resource "azurerm_storage_account" "str" {
   
-  name                     = "stadevr1marktest90"
+  name                     = "stadevr1marktest907"
   resource_group_name      = local.resource_group_name
   location                 = local.location
   account_tier             = "Standard"
@@ -29,7 +29,7 @@ resource "azurerm_storage_account" "str" {
 }
 #Provision a Data Lake Gen2 File System within an Azure Storage Account
 resource "azurerm_storage_data_lake_gen2_filesystem" "dlg2" {
-  name               = "fsstadevr1marktest90"
+  name               = "fsstadevr1marktest907"
   #storage_account_id = var.storage_account_id
   storage_account_id = azurerm_storage_account.str.id
   depends_on         = [
@@ -40,27 +40,27 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "dlg2" {
 
 
 resource "azurerm_synapse_workspace" "syn" {
-  name                                 = "sawstadevr1marktest90"
+  name                                 = "sawstadevr1marktest907"
   resource_group_name                  = local.resource_group_name
   location                             = local.location
   storage_data_lake_gen2_filesystem_id = azurerm_storage_data_lake_gen2_filesystem.dlg2.id
   sql_administrator_login              = "sslqadmin"
   sql_administrator_login_password     = "3AT@pples!!!"
-  public_network_access_enabled        = true
+  public_network_access_enabled        = false
   managed_virtual_network_enabled      = var.enable_managed_vnet
   data_exfiltration_protection_enabled = var.data_exfiltration_protection_enabled #var.enable_managed_vnet # && var.dep_enabled ? var.dep_enabled : false
   managed_resource_group_name          = "managedrg"
-  azuread_authentication_only          = true 
+  azuread_authentication_only          = false 
   #azureADOnlyAuthentication             = true
   
-  purview_id = var.purview_id
+  # purview_id = var.purview_id
   #aad_admin  = [var.aad_admin]
-  aad_admin  {
-    login     = "testuser@ajitpatelhotmail.onmicrosoft.com"
-    object_id = data.azurerm_client_config.current.object_id #var.object_id
-    tenant_id = data.azurerm_client_config.current.object_id #var.tenant_id 
+  # aad_admin  {
+  #   login     = "testuser@ajitpatelhotmail.onmicrosoft.com"
+  #   object_id = data.azurerm_client_config.current.object_id #var.object_id
+  #   tenant_id = data.azurerm_client_config.current.object_id #var.tenant_id 
     
-  }
+  # }
   /*
     dynamic "identity" {
     for_each = var.identity_type != null ? ["identity"] : []
@@ -109,41 +109,45 @@ resource "azurerm_synapse_managed_private_endpoint" "example" {
   synapse_workspace_id = azurerm_synapse_workspace.syn.id
   target_resource_id   = azurerm_storage_account.str.id
   subresource_name     = "blob"  
-}
-
-resource "azurerm_private_endpoint" "main" {  
-  for_each = { for i, v in var.resource_to_connect : i => v }
-
-  name                 = "pep-${var.name}"
-  location             = local.location
-  resource_group_name  = var.resource_group_name
-  subnet_id            = data.azurerm_subnet.pepstasbnt.id
-  private_service_connection {
-    name                           = "pep-${var.name}-psc"
-    private_connection_resource_id = azurerm_synapse_workspace.syn.id    
-    subresource_names              = [each.value]
-    is_manual_connection           = false
-  }  
-
-}
-
-resource "azurerm_private_dns_a_record" "dnsamain" {
-  depends_on = [
-    data.azurerm_resource_group.arg,
-    azurerm_private_endpoint.main
-  ]
-  provider = azurerm.CoreServices
-
-  for_each = { for i, v in var.resource_to_connect : i => v }
-
-  name                = "${var.name}"
-  zone_name           = data.azurerm_private_dns_zone.dnszone[each.value].name
-  resource_group_name = data.azurerm_private_dns_zone.dnszone[each.value].resource_group_name
-  ttl                 = 10
-  records             = azurerm_private_endpoint.main[each.key].custom_dns_configs[0].ip_addresses
-  
+  depends_on = [ azurerm_private_endpoint.syn_ws_pe_dev,
+  azurerm_private_endpoint.syn_ws_pe_sql,
+  azurerm_private_endpoint.syn_ws_pe_sqlondemand ]
   
 }
+
+# resource "azurerm_private_endpoint" "main" {  
+#   for_each = { for i, v in var.resource_to_connect : i => v }
+
+#   name                 = "pep-${var.name}"
+#   location             = local.location
+#   resource_group_name  = var.resource_group_name
+#   subnet_id            = data.azurerm_subnet.pepstasbnt.id
+#   private_service_connection {
+#     name                           = "pep-${var.name}-psc"
+#     private_connection_resource_id = azurerm_synapse_workspace.syn.id    
+#     subresource_names              = [each.value]
+#     is_manual_connection           = false
+#   }  
+
+# }
+
+# resource "azurerm_private_dns_a_record" "dnsamain" {
+#   depends_on = [
+#     data.azurerm_resource_group.arg,
+#     azurerm_private_endpoint.main
+#   ]
+#   provider = azurerm.CoreServices
+
+#   for_each = { for i, v in var.resource_to_connect : i => v }
+
+#   name                = "${var.name}"
+#   zone_name           = data.azurerm_private_dns_zone.dnszone[each.value].name
+#   resource_group_name = data.azurerm_private_dns_zone.dnszone[each.value].resource_group_name
+#   ttl                 = 10
+#   records             = azurerm_private_endpoint.main[each.key].custom_dns_configs[0].ip_addresses
+  
+  
+# }
 
 
 resource "azurerm_role_assignment" "role_assignment" {
@@ -176,11 +180,22 @@ resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
   location            = local.location
   resource_group_name = var.resource_group_name
   subnet_id           = data.azurerm_subnet.pepstasbnt.id
+  ip_configuration {
+    name = "devip"
+    private_ip_address = "10.0.0.211"
+     member_name = "Dev"
+     subresource_name = "Dev"
+
+  }
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [ "/subscriptions/abf6e67d-acb3-4c8e-8d85-093fc67df96e/resourceGroups/vnets/providers/Microsoft.Network/privateDnsZones/privatelink.dev.azuresynapse.net" ]
+  }
 
   private_service_connection {
     name                           = "psc-dev-${local.basename}"
     private_connection_resource_id = azurerm_synapse_workspace.syn.id
-    subresource_names              = ["dev"]
+    subresource_names              = ["dDv"]
     is_manual_connection           = false
   }
 }
@@ -190,11 +205,21 @@ resource "azurerm_private_endpoint" "syn_ws_pe_sql" {
   location            = local.location
   resource_group_name = var.resource_group_name
   subnet_id           = data.azurerm_subnet.pepstasbnt.id
+   ip_configuration {
+    name = "devip"
+    private_ip_address = "10.0.0.212"
+     member_name = "Sql"
+     subresource_name = "Sql"
 
+  }
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [ "/subscriptions/abf6e67d-acb3-4c8e-8d85-093fc67df96e/resourceGroups/vnets/providers/Microsoft.Network/privateDnsZones/privatelink.sql.azuresynapse.net" ]
+  }
   private_service_connection {
     name                           = "psc-sql-${local.basename}"
     private_connection_resource_id = azurerm_synapse_workspace.syn.id
-    subresource_names              = ["sql"]
+    subresource_names              = ["Sql"]
     is_manual_connection           = false
   }
 }
@@ -204,11 +229,21 @@ resource "azurerm_private_endpoint" "syn_ws_pe_sqlondemand" {
   location            = local.location
   resource_group_name = var.resource_group_name
   subnet_id           = data.azurerm_subnet.pepstasbnt.id
+   ip_configuration {
+    name = "devip"
+    private_ip_address = "10.0.0.213"
+     member_name = "SqlOnDemand"
+     subresource_name = "SqlOnDemand"
 
+  }
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [ "/subscriptions/abf6e67d-acb3-4c8e-8d85-093fc67df96e/resourceGroups/vnets/providers/Microsoft.Network/privateDnsZones/privatelink.sql.azuresynapse.net" ]
+  }
   private_service_connection {
     name                           = "psc-sqlondemand-${local.basename}"
     private_connection_resource_id = azurerm_synapse_workspace.syn.id
-    subresource_names              = ["sqlondemand"]
+    subresource_names              = ["SqlOnDemand"]
     is_manual_connection           = false
   }
 }
