@@ -6,7 +6,7 @@ locals {
 
 resource "azurerm_storage_account" "str" {
   
-  name                     = "stadevr1marktest907"
+  name                     = "stadevr1markt910"
   resource_group_name      = local.resource_group_name
   location                 = local.location
   account_tier             = "Standard"
@@ -14,7 +14,7 @@ resource "azurerm_storage_account" "str" {
   account_kind             = var.storage_kind
   access_tier              = var.stroage_access_tier
   is_hns_enabled           = var.enable_hns
-   public_network_access_enabled     = true
+   public_network_access_enabled     = false
    allow_nested_items_to_be_public   = false
 
   network_rules {
@@ -29,7 +29,7 @@ resource "azurerm_storage_account" "str" {
 }
 #Provision a Data Lake Gen2 File System within an Azure Storage Account
 resource "azurerm_storage_data_lake_gen2_filesystem" "dlg2" {
-  name               = "fsstadevr1marktest907"
+  name               = "fsstadevr1marktes0"
   #storage_account_id = var.storage_account_id
   storage_account_id = azurerm_storage_account.str.id
   depends_on         = [
@@ -40,7 +40,7 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "dlg2" {
 
 
 resource "azurerm_synapse_workspace" "syn" {
-  name                                 = "sawstadevr1marktest907"
+  name                                 = "sawstadevr1markt910"
   resource_group_name                  = local.resource_group_name
   location                             = local.location
   storage_data_lake_gen2_filesystem_id = azurerm_storage_data_lake_gen2_filesystem.dlg2.id
@@ -50,7 +50,7 @@ resource "azurerm_synapse_workspace" "syn" {
   managed_virtual_network_enabled      = var.enable_managed_vnet
   data_exfiltration_protection_enabled = var.data_exfiltration_protection_enabled #var.enable_managed_vnet # && var.dep_enabled ? var.dep_enabled : false
   managed_resource_group_name          = "managedrg"
-  azuread_authentication_only          = false 
+  azuread_authentication_only          = true 
   #azureADOnlyAuthentication             = true
   
   # purview_id = var.purview_id
@@ -189,7 +189,7 @@ resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
   }
   private_dns_zone_group {
     name = "default"
-    private_dns_zone_ids = [ "/subscriptions/abf6e67d-acb3-4c8e-8d85-093fc67df96e/resourceGroups/vnets/providers/Microsoft.Network/privateDnsZones/privatelink.dev.azuresynapse.net" ]
+    private_dns_zone_ids = [ "/subscriptions/2305a573-07dc-4b80-b2f8-e218b4f72f77/resourceGroups/arg-dev-r1-marktest-01/providers/Microsoft.Network/privateDnsZones/privatelink.dev.azuresynapse.net" ]
   }
 
   private_service_connection {
@@ -214,7 +214,7 @@ resource "azurerm_private_endpoint" "syn_ws_pe_sql" {
   }
   private_dns_zone_group {
     name = "default"
-    private_dns_zone_ids = [ "/subscriptions/abf6e67d-acb3-4c8e-8d85-093fc67df96e/resourceGroups/vnets/providers/Microsoft.Network/privateDnsZones/privatelink.sql.azuresynapse.net" ]
+    private_dns_zone_ids = [ "/subscriptions/2305a573-07dc-4b80-b2f8-e218b4f72f77/resourceGroups/arg-dev-r1-marktest-01/providers/Microsoft.Network/privateDnsZones/privatelink.sql.azuresynapse.net" ]
   }
   private_service_connection {
     name                           = "psc-sql-${local.basename}"
@@ -238,7 +238,7 @@ resource "azurerm_private_endpoint" "syn_ws_pe_sqlondemand" {
   }
   private_dns_zone_group {
     name = "default"
-    private_dns_zone_ids = [ "/subscriptions/abf6e67d-acb3-4c8e-8d85-093fc67df96e/resourceGroups/vnets/providers/Microsoft.Network/privateDnsZones/privatelink.sql.azuresynapse.net" ]
+    private_dns_zone_ids = [ "/subscriptions/2305a573-07dc-4b80-b2f8-e218b4f72f77/resourceGroups/arg-dev-r1-marktest-01/providers/Microsoft.Network/privateDnsZones/privatelink.sql.azuresynapse.net" ]
   }
   private_service_connection {
     name                           = "psc-sqlondemand-${local.basename}"
