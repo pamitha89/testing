@@ -114,16 +114,16 @@ variable "azurePrivateDNS" {
   type        = map(any)
   description = "Azure Private DNS mapping"
   default = {
-    "sites"     = "privatelink.azurewebsites.net"
+    #"sites"     = "privatelink.azurewebsites.net"
     "blob"      = "privatelink.blob.core.windows.net"
-    "sqlServer" = "privatelink.database.windows.net"
-    "file"      = "privatelink.file.core.windows.net"
-    "queue"     = "privatelink.queue.core.windows.net"
-    "table"     = "privatelink.table.core.windows.net"
-    "vault"     = "privatelink.vaultcore.azure.net"
-    "web"       = "privatelink.web.core.windows.net"
+    #"sqlServer" = "privatelink.database.windows.net"
+    #"file"      = "privatelink.file.core.windows.net"
+    #"queue"     = "privatelink.queue.core.windows.net"
+    #"table"     = "privatelink.table.core.windows.net"
+    #"vault"     = "privatelink.vaultcore.azure.net"
+    #"web"       = "privatelink.web.core.windows.net"
     "dfs"       = "privatelink.dfs.core.windows.net"
-    "dev"   = "privatelink.dev.azuresynapse.net"
+    #"dev"   = "privatelink.dev.azuresynapse.net"
   }
 }
 
