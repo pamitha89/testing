@@ -3,26 +3,26 @@ data "azurerm_resource_group" "arg" {
 }
 
 data "azurerm_private_dns_zone" "dnszone" {
-  provider = azurerm.CoreServices
+  #provider = azurerm.CoreServices
 
   for_each            = var.azurePrivateDNS
   name                = each.value
-  resource_group_name = "arg-cre-r1-privatedns-01"
+  resource_group_name = "vnets"
 }
 
 data "azurerm_client_config" "current" {}
 data "azurerm_subscription" "current" {
 }
 data "azurerm_private_dns_zone" "syn_st_zone_blob" {
-  provider = azurerm.CoreServices
+  #provider = azurerm.CoreServices
   name                = "privatelink.blob.core.windows.net"
-  resource_group_name = "arg-cre-r1-privatedns-01"
+  resource_group_name = "vnets"
 }
 
 data "azurerm_private_dns_zone" "syn_st_zone_dfs" {
-  provider = azurerm.CoreServices
+  #provider = azurerm.CoreServices
   name                = "privatelink.dfs.core.windows.net"
-  resource_group_name = "arg-cre-r1-privatedns-01"
+  resource_group_name = "vnets"
 }
 
 # Linking of DNS zones to Virtual Network
