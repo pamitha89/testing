@@ -195,7 +195,7 @@ resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
   private_service_connection {
     name                           = "psc-dev-${local.basename}"
     private_connection_resource_id = azurerm_synapse_workspace.syn.id
-    subresource_names              = ["dDv"]
+    subresource_names              = ["Dev"]
     is_manual_connection           = false
   }
 }
