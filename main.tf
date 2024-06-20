@@ -38,6 +38,12 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "dlg2" {
     ]
 }
 
+resource "azurerm_synapse_private_link_hub" "plinkhub1" {
+  name                = "plinkhub"
+  resource_group_name = "arg-dev-r1-Marktest-01"
+  location            = "Australia East"
+}
+
 
 resource "azurerm_synapse_workspace" "syn" {
   name                                 = "sawstadevr1pam110"
@@ -179,6 +185,32 @@ resource "azurerm_synapse_role_assignment" "ajithrole" {
   role_name            = "Synapse SQL Administrator"
   principal_id         = "b6dfbf74-3577-4f69-bc25-27662b021590"
 }
+
+resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
+  name                = "pe-plinkhub"
+  location            = local.location
+  resource_group_name = var.resource_group_name
+  subnet_id           = data.azurerm_subnet.pepstasbnt.id
+  ip_configuration {
+    name = "devip"
+    private_ip_address = "10.0.1.120"
+     member_name = "Web"
+     subresource_name = "Web"
+
+  }
+  private_dns_zone_group {
+    name = "default"
+    private_dns_zone_ids = [ "/subscriptions/2305a573-07dc-4b80-b2f8-e218b4f72f77/resourceGroups/arg-dev-r1-marktest-01/providers/Microsoft.Network/privateDnsZones/privatelink.azuresynapse.net" ]
+  }
+
+  private_service_connection {
+    name                           = "psc-plink"
+    private_connection_resource_id = azurerm_synapse_private_link_hub.plinkhub1.id
+    subresource_names              = ["Web"]
+    is_manual_connection           = false
+  }
+}
+
 resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
   name                = "pe-${azurerm_synapse_workspace.syn.name}-dev"
   location            = local.location
