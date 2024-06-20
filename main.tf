@@ -6,7 +6,7 @@ locals {
 
 resource "azurerm_storage_account" "str" {
   
-  name                     = "stadevr1markt6310"
+  name                     = "stadevr1markt1210"
   resource_group_name      = local.resource_group_name
   location                 = local.location
   account_tier             = "Standard"
@@ -29,7 +29,7 @@ resource "azurerm_storage_account" "str" {
 }
 #Provision a Data Lake Gen2 File System within an Azure Storage Account
 resource "azurerm_storage_data_lake_gen2_filesystem" "dlg2" {
-  name               = "fsstadevr1marks0"
+  name               = "fsstadevr1marks112"
   #storage_account_id = var.storage_account_id
   storage_account_id = azurerm_storage_account.str.id
   depends_on         = [
@@ -40,7 +40,7 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "dlg2" {
 
 
 resource "azurerm_synapse_workspace" "syn" {
-  name                                 = "sawstadevr1pam910"
+  name                                 = "sawstadevr1pam110"
   resource_group_name                  = local.resource_group_name
   location                             = local.location
   storage_data_lake_gen2_filesystem_id = azurerm_storage_data_lake_gen2_filesystem.dlg2.id
@@ -49,7 +49,7 @@ resource "azurerm_synapse_workspace" "syn" {
   public_network_access_enabled        = false
   managed_virtual_network_enabled      = var.enable_managed_vnet
   data_exfiltration_protection_enabled = var.data_exfiltration_protection_enabled #var.enable_managed_vnet # && var.dep_enabled ? var.dep_enabled : false
-  managed_resource_group_name          = "managedrg12"
+  managed_resource_group_name          = "manage112"
   azuread_authentication_only          = true 
   #azureADOnlyAuthentication             = true
   
@@ -174,7 +174,11 @@ resource "azurerm_role_assignment" "syn_st_role_si_c" {
   role_definition_name = "Contributor"
   principal_id         = azurerm_synapse_workspace.syn.identity[0].principal_id
 }
-
+resource "azurerm_synapse_role_assignment" "ajithrole" {
+  synapse_workspace_id = azurerm_synapse_workspace.syn.id
+  role_name            = "Synapse SQL Administrator"
+  principal_id         = "b6dfbf74-3577-4f69-bc25-27662b021590"
+}
 resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
   name                = "pe-${azurerm_synapse_workspace.syn.name}-dev"
   location            = local.location
@@ -182,7 +186,7 @@ resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
   subnet_id           = data.azurerm_subnet.pepstasbnt.id
   ip_configuration {
     name = "devip"
-    private_ip_address = "10.0.1.211"
+    private_ip_address = "10.0.1.111"
      member_name = "Dev"
      subresource_name = "Dev"
 
@@ -207,7 +211,7 @@ resource "azurerm_private_endpoint" "syn_ws_pe_sql" {
   subnet_id           = data.azurerm_subnet.pepstasbnt.id
    ip_configuration {
     name = "devip"
-    private_ip_address = "10.0.1.212"
+    private_ip_address = "10.0.1.112"
      member_name = "Sql"
      subresource_name = "Sql"
 
@@ -231,7 +235,7 @@ resource "azurerm_private_endpoint" "syn_ws_pe_sqlondemand" {
   subnet_id           = data.azurerm_subnet.pepstasbnt.id
    ip_configuration {
     name = "devip"
-    private_ip_address = "10.0.1.213"
+    private_ip_address = "10.0.1.113"
      member_name = "SqlOnDemand"
      subresource_name = "SqlOnDemand"
 
