@@ -178,6 +178,9 @@ resource "azurerm_synapse_role_assignment" "pamitharole" {
   synapse_workspace_id = azurerm_synapse_workspace.syn.id
   role_name            = "Synapse SQL Administrator"
   principal_id         = "74a081c0-a18d-4dc4-8205-27012ac7cf8b"
+  depends_on = [ azurerm_private_endpoint.syn_ws_pe_dev,
+  azurerm_private_endpoint.syn_ws_pe_sql,
+  azurerm_private_endpoint.syn_ws_pe_sqlondemand ]
 }
 
 resource "azurerm_private_endpoint" "plink_hub_pe" {
