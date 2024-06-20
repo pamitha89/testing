@@ -180,7 +180,7 @@ resource "azurerm_synapse_role_assignment" "pamitharole" {
   principal_id         = "74a081c0-a18d-4dc4-8205-27012ac7cf8b"
 }
 
-resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
+resource "azurerm_private_endpoint" "plink_hub_pe" {
   name                = "pe-plinkhub"
   location            = local.location
   resource_group_name = var.resource_group_name
