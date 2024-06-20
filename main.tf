@@ -103,13 +103,7 @@ resource "azurerm_synapse_spark_pool" "sparkpool" {
     min_node_count = 3
   }
 }
-/*
-resource "azurerm_synapse_firewall_rule" "example" {
-  name                 = "AllowAll"
-  synapse_workspace_id = azurerm_synapse_workspace.syn.id
-  start_ip_address     = "0.0.0.0"
-  end_ip_address       = "255.255.255.255"
-}*/
+
 resource "azurerm_synapse_managed_private_endpoint" "example" {
   name                 = "example-endpoint"
   synapse_workspace_id = azurerm_synapse_workspace.syn.id
@@ -180,10 +174,10 @@ resource "azurerm_role_assignment" "syn_st_role_si_c" {
   role_definition_name = "Contributor"
   principal_id         = azurerm_synapse_workspace.syn.identity[0].principal_id
 }
-resource "azurerm_synapse_role_assignment" "ajithrole" {
+resource "azurerm_synapse_role_assignment" "pamitharole" {
   synapse_workspace_id = azurerm_synapse_workspace.syn.id
   role_name            = "Synapse SQL Administrator"
-  principal_id         = "b6dfbf74-3577-4f69-bc25-27662b021590"
+  principal_id         = "74a081c0-a18d-4dc4-8205-27012ac7cf8b"
 }
 
 resource "azurerm_private_endpoint" "syn_ws_pe_dev" {
