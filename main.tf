@@ -51,7 +51,7 @@ resource "azurerm_synapse_workspace" "syn" {
   managed_virtual_network_enabled      = var.enable_managed_vnet
   data_exfiltration_protection_enabled = var.data_exfiltration_protection_enabled #var.enable_managed_vnet # && var.dep_enabled ? var.dep_enabled : false
   managed_resource_group_name          = "manage112"
-  azuread_authentication_only          = true 
+  azuread_authentication_only          = false 
   #azureADOnlyAuthentication             = true
 
  identity {
