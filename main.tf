@@ -213,3 +213,4 @@ resource "azurerm_private_endpoint" "syn_ws_pe_sqlondemand" {
     subresource_names              = ["SqlOnDemand"]
     is_manual_connection           = false
   }
+}
