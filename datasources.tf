@@ -77,6 +77,11 @@ resource "azurerm_private_endpoint" "syn_st_pe_dfs" {
     private_connection_resource_id = azurerm_storage_account.str.id
     subresource_names              = ["dfs"]
     is_manual_connection           = false
+  
+  }
+  depends_on = [ azurerm_private_endpoint.syn_st_pe_blob ]
+  lifecycle {
+    create_before_destroy = true
   }
 
   private_dns_zone_group {
