@@ -79,11 +79,6 @@ resource "azurerm_private_endpoint" "syn_st_pe_dfs" {
     is_manual_connection           = false
   
   }
-  depends_on = [ azurerm_private_endpoint.syn_st_pe_blob ]
-  lifecycle {
-    create_before_destroy = true
-  }
-
   private_dns_zone_group {
     name                 = "private-dns-zone-group-dfs"
     private_dns_zone_ids = [data.azurerm_private_dns_zone.syn_st_zone_dfs.id]
